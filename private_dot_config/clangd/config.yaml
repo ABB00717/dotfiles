@@ -1,0 +1,12 @@
+CompileFlags:
+  Add: [-Wall, -Wextra]
+---
+If:
+  PathMatch: .*\.(cpp|cc|cxx|hpp|hh|h)$
+CompileFlags:
+  Add: [-std=c++23, -xc++]
+---
+If:
+  PathMatch: .*\.c$
+CompileFlags:
+  Add: [-std=c23, -xc]

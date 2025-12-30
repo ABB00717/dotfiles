@@ -1,0 +1,18 @@
+# 進入容器
+docker exec -it postgres psql -U postgres -d postgres
+
+# 常用命令
+\dt              # 列出所有表
+\d photos        # 查看 photos 表結構
+SELECT * FROM photos;
+SELECT COUNT(*) FROM photos;
+\q               # 退出
+
+# 查看所有 photos
+docker exec postgres psql -U postgres -d postgres -c "SELECT * FROM photos;"
+
+# 查看數量
+docker exec postgres psql -U postgres -d postgres -c "SELECT COUNT(*) FROM photos;"
+
+# 清空所有表
+docker exec postgres psql -U postgres -d postgres -c "TRUNCATE TABLE user_badges, photos, badges, users CASCADE;"

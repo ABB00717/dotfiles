@@ -1,0 +1,3 @@
+# assembler
+as source.c -o source.o
+ld source.o -o source

@@ -1,0 +1,11 @@
+# Softlink establish a master-slave relationship. They act as a pointer that simply redirects to the original file location.
+# If the original file's deleted or moved, the Softlink will be broken.
+
+# Hardlink create a new directory entry that point to the same inode on the disk, and all changes made through any of these linked files are instantly synchronized.
+# The file's data will only be truly deleted from disk when all hardlinks pointing to it are deleted.
+
+# To create a symlink:
+ln -s <source-location> <symlink-location>
+
+# To symlink, while overwriting existing destination files
+ln -sf <source-location> <symlink-location>
