@@ -1,0 +1,45 @@
+alias v='nvim'
+alias vimc='nvim -u ~/.config/nvim/init.vim'
+alias py='python3.14'
+alias tmux-kst='tmux kill-session -t'
+alias tldrf='tldr --list | fzf --preview "tldr {1}" --preview-window=right,70% | xargs tldr'
+alias s-venv='source .venv/bin/activate'
+alias pwn-college='ssh -i key hacker@dojo.pwn.college'
+alias vencord-terminal='sh -c "$(curl -sS https://vencord.dev/install.sh)"'
+alias ff="fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'"
+alias ls='eza $eza_params'
+alias l='eza --git-ignore $eza_params'
+alias ll='eza --all --header --long $eza_params'
+alias llm='eza --all --header --long --sort=modified $eza_params'
+alias la='eza -lbhHigUmuSa'
+alias lx='eza -lbhHigUmuSa@'
+alias lt='eza --tree $eza_params'
+alias tree='eza --tree $eza_params'
+
+# Metasploit
+alias pattern_create='/opt/metasploit-framework/embedded/bin/ruby /opt/metasploit-framework/embedded/framework/tools/exploit/pattern_create.rb'
+alias pattern_offset='/opt/metasploit-framework/embedded/bin/ruby /opt/metasploit-framework/embedded/framework/tools/exploit/pattern_offset.rb'
+
+# git-cmp: Commit with message and Push
+# Usage: git-cmp "Your commit message here"
+git-cmp() {
+  if [ -z "$1" ]; then
+    echo "Error: Please provide a commit message."
+    echo "Usage: git-cmp \"Your commit message\""
+    return 1
+  fi
+
+  echo "Committing with message: \"$1\""
+  # Commit the changes using the first argument as the message
+  git commit -m "$1"
+
+  # Check if the commit was successful before pushing
+  if [ $? -eq 0 ]; then
+    echo "Commit successful. Pushing changes..."
+    # Push the changes to the remote repository
+    git push
+  else
+    echo "Commit failed. Aborting push."
+    return 1
+  fi
+}
