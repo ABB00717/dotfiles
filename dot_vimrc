@@ -47,6 +47,9 @@ set wildoptions=pum,tagfile
 
 "Plugins
 call plug#begin()
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'preservim/nerdtree'
@@ -56,9 +59,7 @@ Plug 'tpope/vim-surround'
 Plug 'edkolev/tmuxline.vim'
 
 Plug 'dense-analysis/ale'
-Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
+"Plug 'Shougo/deoplete.nvim'
 call plug#end()
 
 "Themes
@@ -71,7 +72,7 @@ colorscheme apprentice
 "colorscheme monochrome
 
 "Enable Deoplete and set up keybindings
-let g:deoplete#enable_at_startup = 1
+"let g:deoplete#enable_at_startup = 1
 
 let g:ale_linters = {
     \'python': ['pylsp'],

@@ -160,3 +160,6 @@ export PATH="$HOME/Apps/gf/:$PATH"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
+# Setting default editor
+export EDITOR="nvim"
