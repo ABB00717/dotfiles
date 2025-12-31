@@ -9,3 +9,7 @@ Some other things you should install on your own
 
 ## Optional
 - [Nerd-Fonts](https://www.nerdfonts.com/font-downloads)
+
+```bash
+sudo apt update && sudo apt install openssh-client
+```
