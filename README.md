@@ -2,6 +2,7 @@ Managed by [Chezmoi](https://www.chezmoi.io/)
 
 # Quick Start
 ```bash
+sudo snap install chezmoi --classic
 chezmoi init --apply abb00717
 ```
 
