@@ -1,5 +1,10 @@
 Managed by [Chezmoi](https://www.chezmoi.io/)
 
+# Quick Start
+```bash
+chezmoi init --apply abb00717
+```
+
 # Install
 Some other things you should install on your own
 - [vim-plug](https://github.com/junegunn/vim-plug)
