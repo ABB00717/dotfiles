@@ -122,6 +122,7 @@ require("lazy").setup({
     -- 3. mini.ai/surround: Text objects & surroundings
     -- 4. guess-indent: Auto-detect indentation
     -- 5. Telescope: Fuzzy Finder (<leader>s...)
+    -- 6. LuaSnip: Custom Snippets
 
     {
         "NeogitOrg/neogit",
@@ -167,6 +168,13 @@ require("lazy").setup({
                 builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({ previewer = false }))
             end, { desc = "[/] Fuzzily search in current buffer" })
         end,
+    },
+    {
+        "L3MON4D3/LuaSnip",
+        -- follow latest release.
+        version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+        -- install jsregexp (optional!).
+        build = "make install_jsregexp",
     },
 
     -- [[ Section 3.3: The Intelligence ]]
