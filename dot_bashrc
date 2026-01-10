@@ -152,6 +152,7 @@ export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
 set -o vi
+export CDPATH=.:~/Shortcuts/
 
 # Setup gf2
 export PATH="$HOME/Apps/gf/:$PATH"
