@@ -46,7 +46,7 @@ vim.o.confirm = true
 vim.o.inccommand = "split"
 vim.o.mouse = "a" -- Behavior
 -- Obsidian
-vim.opt_local.conceallevel = 2
+vim.opt_local.conceallevel = 1
 
 -- Basic Keymaps
 vim.keymap.set("n", "!", ":!")
@@ -305,7 +305,6 @@ require("lazy").setup({
     -- 1. obsidian.nvim: Note taking (<leader>o...)
     -- X. otter.nvim: Literate Programming (Code injection)
     -- X. render-markdown: Render Markdown in Neovim
-    -- X. markdown-preview: Preview Markdown in your Browser
 
     -- {
     --     "MeanderingProgrammer/render-markdown.nvim",
@@ -323,15 +322,6 @@ require("lazy").setup({
     --             bottom_pad = 0,
     --         },
     --     },
-    -- },
-    -- {
-    --     "iamcco/markdown-preview.nvim",
-    --     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    --     build = "cd app && yarn install",
-    --     init = function()
-    --         vim.g.mkdp_filetypes = { "markdown" }
-    --     end,
-    --     ft = { "markdown" },
     -- },
 
     {
@@ -360,16 +350,15 @@ require("lazy").setup({
                     },
                 },
             },
-            -- Snipped from https://raw.githubusercontent.com/elyoni/dotfiles/6db2e006de6dcbcf811f608ba52548898f0ce850/applications/neovim/nvim/lua/plugins/productive.lua,
             callbacks = {
-                post_set_workspace = function(client, workspace)
+                post_set_workspace = function(workspace)
                     if not workspace then
                         return
                     end
 
                     -- Change the working directory to the current workspace's path
-                    local new_cwd = workspace.path and workspace.path.filename or nil
-                    if new_cwd then
+                    local new_cwd = tostring(workspace.path or "")
+                    if new_cwd and new_cwd ~= "" then
                         -- Change the working directory to the new workspace path
                         vim.cmd("cd " .. new_cwd)
                         vim.notify("Switched to workspace: " .. new_cwd, vim.log.levels.INFO, {
