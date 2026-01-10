@@ -303,26 +303,8 @@ require("lazy").setup({
 
     -- [[ Section 3.4: Knowledge ]]
     -- 1. obsidian.nvim: Note taking (<leader>o...)
+    -- 2. render-markdown: Render Markdown in Neovim
     -- X. otter.nvim: Literate Programming (Code injection)
-    -- X. render-markdown: Render Markdown in Neovim
-
-    -- {
-    --     "MeanderingProgrammer/render-markdown.nvim",
-    --     ft = { "markdown", "codecompanion" },
-    --     opts = {
-    --         heading = { enabled = false },
-    --         code = { enabled = true, width = "block" },
-    --         latex = {
-    --             enabled = true,
-    --             render_modes = true,
-    --             converter = { "utftex", "latex2text" },
-    --             highlight = "RenderMarkdownMath",
-    --             position = "center",
-    --             top_pad = 0,
-    --             bottom_pad = 0,
-    --         },
-    --     },
-    -- },
 
     {
         "obsidian-nvim/obsidian.nvim",
@@ -424,6 +406,23 @@ require("lazy").setup({
             { "<leader>os", "<cmd>Obsidian search<cr>", desc = "Obsidian Search" },
             { "<leader>ot", "<cmd>Obsidian template<cr>", desc = "Obsidian Template" },
             { "<leader>ow", "<cmd>Obsidian workspace<cr>", desc = "Obsidian Workspace" },
+        },
+    },
+    {
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = { "markdown", "codecompanion" },
+        opts = {
+            heading = { enabled = false },
+            code = { enabled = true, width = "block" },
+            latex = {
+                enabled = true,
+                render_modes = true,
+                converter = { "utftex", "latex2text" },
+                highlight = "RenderMarkdownMath",
+                position = "center",
+                top_pad = 0,
+                bottom_pad = 0,
+            },
         },
     },
     -- {
