@@ -45,6 +45,8 @@ vim.o.timeoutlen = 300
 vim.o.confirm = true
 vim.o.inccommand = "split"
 vim.o.mouse = "a" -- Behavior
+-- Obsidian
+vim.opt_local.conceallevel = 2
 
 -- Basic Keymaps
 vim.keymap.set("n", "!", ":!")
@@ -293,38 +295,97 @@ require("lazy").setup({
             highlight = { enable = true },
             indent = { enable = true },
         },
-        config = function(_, opts)
-            require("nvim-treesitter.configs").setup(opts)
-        end,
+        -- config = function(_, opts)
+        --     require("nvim-treesitter.configs").setup(opts)
+        -- end,
     },
 
     -- [[ Section 3.4: Knowledge ]]
-    -- 1. render-markdown: Preview Markdown
-    -- 2. obsidian.nvim: Note taking (<leader>o...)
-    -- 3. otter.nvim: Literate Programming (Code injection)
+    -- 1. obsidian.nvim: Note taking (<leader>o...)
+    -- X. otter.nvim: Literate Programming (Code injection)
+    -- X. render-markdown: Render Markdown in Neovim
+    -- X. markdown-preview: Preview Markdown in your Browser
+
+    -- {
+    --     "MeanderingProgrammer/render-markdown.nvim",
+    --     ft = { "markdown", "codecompanion" },
+    --     opts = {
+    --         heading = { enabled = false },
+    --         code = { enabled = true, width = "block" },
+    --         latex = {
+    --             enabled = true,
+    --             render_modes = true,
+    --             converter = { "utftex", "latex2text" },
+    --             highlight = "RenderMarkdownMath",
+    --             position = "center",
+    --             top_pad = 0,
+    --             bottom_pad = 0,
+    --         },
+    --     },
+    -- },
+    -- {
+    --     "iamcco/markdown-preview.nvim",
+    --     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    --     build = "cd app && yarn install",
+    --     init = function()
+    --         vim.g.mkdp_filetypes = { "markdown" }
+    --     end,
+    --     ft = { "markdown" },
+    -- },
 
     {
-        "MeanderingProgrammer/render-markdown.nvim",
-        ft = { "markdown", "codecompanion" },
-        opts = { heading = { enabled = false }, code = { enabled = true, width = "block" }, latex = { enabled = true } },
-    },
-    {
-        "epwalsh/obsidian.nvim",
+        "obsidian-nvim/obsidian.nvim",
         version = "*",
-        lazy = true,
         ft = "markdown",
-        dependencies = { "nvim-lua/plenary.nvim" },
         opts = {
+            legacy_commands = false,
             workspaces = {
-                { name = "ABB00717", path = "~/Documents/ABB00717/" },
-                { name = "Obsidian Media", path = "~/Documents/Obsidian Media/" },
+                { name = "Notes", path = "~/Documents/Obsidian/Notes/" },
+                { name = "Linear", path = "~/Documents/Obsidian/Linear/" },
+                { name = "Blog", path = "~/Projects/abb00717.com/content/" },
+                {
+                    name = tostring(vim.fn.getcwd()),
+                    path = function()
+                        -- use the CWD:
+                        return assert(vim.fn.getcwd())
+                    end,
+                    overrides = {
+                        notes_subdir = vim.NIL, -- have to use 'vim.NIL' instead of 'nil'
+                        new_notes_location = vim.fn.getcwd(),
+                        templates = {
+                            folder = vim.NIL,
+                        },
+                        frontmatter = { enabled = false },
+                    },
+                },
+            },
+            -- Snipped from https://raw.githubusercontent.com/elyoni/dotfiles/6db2e006de6dcbcf811f608ba52548898f0ce850/applications/neovim/nvim/lua/plugins/productive.lua,
+            callbacks = {
+                post_set_workspace = function(client, workspace)
+                    if not workspace then
+                        return
+                    end
+
+                    -- Change the working directory to the current workspace's path
+                    local new_cwd = workspace.path and workspace.path.filename or nil
+                    if new_cwd then
+                        -- Change the working directory to the new workspace path
+                        vim.cmd("cd " .. new_cwd)
+                        vim.notify("Switched to workspace: " .. new_cwd, vim.log.levels.INFO, {
+                            timeout = 1000, -- auto-dismiss after 1s
+                        })
+                    else
+                        print("Error: Workspace path is invalid or nil.")
+                    end
+                end,
             },
             ui = { enable = false },
         },
         keys = {
-            { "<leader>on", "<cmd>ObsidianNew<cr>", desc = "Obsidian New" },
-            { "<leader>os", "<cmd>ObsidianSearch<cr>", desc = "Obsidian Search" },
-            { "<leader>ot", "<cmd>ObsidianTemplate<cr>", desc = "Obsidian Template" },
+            { "<leader>on", "<cmd>Obsidian new<cr>", desc = "Obsidian New" },
+            { "<leader>os", "<cmd>Obsidian search<cr>", desc = "Obsidian Search" },
+            { "<leader>ot", "<cmd>Obsidian template<cr>", desc = "Obsidian Template" },
+            { "<leader>ow", "<cmd>Obsidian workspace<cr>", desc = "Obsidian Workspace" },
         },
     },
     {

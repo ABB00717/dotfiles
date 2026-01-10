@@ -1,0 +1,3 @@
+gui:
+  mainPanelSplitMode: 'horizontal'
+  sidePanelWidth: 0.2
