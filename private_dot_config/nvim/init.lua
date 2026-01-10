@@ -375,7 +375,55 @@ require("lazy").setup({
                     end
                 end,
             },
-            ui = { enable = false },
+            -- Customize how Obsidian filename generated
+            note_id_func = function(title)
+                local function random_suffix()
+                    return string.char(
+                        math.random(65, 90),
+                        math.random(65, 90),
+                        math.random(65, 90),
+                        math.random(65, 90)
+                    )
+                end
+
+                -- If there's no given title, return DATE-RAND
+                if title == nil or title == "" then
+                    return tostring(os.date("%Y-%m-%d")) .. "-" .. random_suffix()
+                end
+
+                -- filter / \ : * ? " < > |, replace <whitespace> with "-"
+                local valid_title = title:gsub(" ", "-"):gsub('[/\\:*?"<>|]', "")
+
+                -- If nothing left after filtering
+                if valid_title == "" then
+                    return tostring(os.date("%Y-%m-%d")) .. "-" .. random_suffix()
+                end
+
+                return valid_title
+            end,
+            -- Customize frontmatter data
+            frontmatter = {
+                enabled = function(note)
+                    -- Add the title of the note as an alias.
+                    if note.title then
+                        note:add_alias(note.title)
+                    end
+
+                    local out =
+                        { id = note.id, aliases = note.aliases, tags = note.tags, created = os.date("%Y-%m-%d") }
+
+                    -- `note.metadata` contains any manually added fields in the frontmatter.
+                    -- So here we just make sure those fields are kept in the frontmatter.
+                    if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
+                        for k, v in pairs(note.metadata) do
+                            out[k] = v
+                        end
+                    end
+
+                    return out
+                end,
+            },
+            ui = { enable = true },
         },
         keys = {
             { "<leader>on", "<cmd>Obsidian new<cr>", desc = "Obsidian New" },
