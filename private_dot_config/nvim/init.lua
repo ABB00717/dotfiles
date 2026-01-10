@@ -432,44 +432,46 @@ require("lazy").setup({
             { "<leader>ow", "<cmd>Obsidian workspace<cr>", desc = "Obsidian Workspace" },
         },
     },
-    {
-        "jmbuhr/otter.nvim",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        init = function()
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "markdown",
-                callback = function()
-                    require("otter").activate({ "python", "bash", "lua" })
-                end,
-            })
-        end,
-    },
+    -- {
+    --     "jmbuhr/otter.nvim",
+    --     dependencies = { "nvim-treesitter/nvim-treesitter" },
+    --     init = function()
+    --         vim.api.nvim_create_autocmd("FileType", {
+    --             pattern = "markdown",
+    --             callback = function()
+    --                 require("otter").activate({ "python", "bash", "lua" })
+    --             end,
+    --         })
+    --     end,
+    -- },
 })
 
 -- ==================================================================
 -- Chapter 4: The Custom Workflow
 -- ==================================================================
-vim.api.nvim_create_user_command("FitToggle", function()
-    if _G.FitEnabled then
-        _G.FitEnabled = false
-        print("Git Sync Disabled")
-    else
-        _G.FitEnabled = true
-        print("Git Sync Enabled")
-        local timer = vim.loop.new_timer()
-        timer:start(
-            0,
-            300000,
-            vim.schedule_wrap(function()
-                if not _G.FitEnabled then
-                    timer:close()
-                    return
-                end
-                vim.cmd("silent! !git commit -am 'autosave' && git push")
-                print("Git Sync: Pushed")
-            end)
-        )
+
+-- Open URI
+vim.ui.open = (function(overridden)
+    return function(uri, opt)
+        if vim.endswith(uri, ".png") then
+            vim.cmd("edit " .. uri) -- early return to just open in neovim
+            return
+        elseif vim.endswith(uri, ".pdf") then
+            opt = { cmd = { "evince" } } -- override open app
+        else
+            vim.fn.jobstart({ "google-chrome", uri })
+        end
+        return overridden(uri, opt)
     end
-end, {})
+end)(vim.ui.open)
+
+-- Filetype for [No Name](Buffer) is Markdown
+vim.api.nvim_create_autocmd("BufEnter", {
+    callback = function()
+        if vim.fn.expand("%") == "" and vim.bo.filetype == "" and vim.bo.buftype == "" then
+            vim.bo.filetype = "markdown"
+        end
+    end,
+})
 
 -- vim: ts=4 sts=4 sw=4 et
