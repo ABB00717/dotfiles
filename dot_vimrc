@@ -62,8 +62,9 @@ call plug#end()
 
 "Themes
 set termguicolors
-set background=dark
-colorscheme apprentice
+set background=light
+"colorscheme alabaster
+"colorscheme apprentice
 "colorscheme fogbell
 "colorscheme github_dimmed
 "colorscheme base16-grayscale-dark
