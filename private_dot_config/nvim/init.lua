@@ -97,9 +97,18 @@ require("lazy").setup({
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
+        lazy = false,
         branch = "v3.x",
         dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" },
-        keys = { { "<leader>e", ":Neotree toggle<CR>", desc = "Toggle Explorer" } },
+        keys = {
+            { "<leader>e", ":Neotree toggle<CR>", desc = "Toggle Explorer" },
+            { "<leader>tr", ":Neotree toggle current reveal_force_cwd<CR>", desc = "Reveal File" },
+            -- nnoremap / :Neotree toggle current reveal_force_cwd<cr>
+            -- nnoremap | :Neotree reveal<cr>
+            -- nnoremap gd :Neotree float reveal_file=<cfile> reveal_force_cwd<cr>
+            -- nnoremap <leader>b :Neotree toggle show buffers right<cr>
+            -- nnoremap <leader>s :Neotree float git_status<cr>
+        },
         opts = { filesystem = { window = { mappings = { ["\\"] = "close_window" } } } },
     },
     { "folke/which-key.nvim", event = "VimEnter", opts = { icons = { mappings = vim.g.have_nerd_font } } },
