@@ -78,19 +78,15 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 
     -- [[ Section 3.1: UI & Aesthetics ]]
-    -- 1. gruvbox-material: Theme (Medium, Performance)
-    -- 2. mini.statusline: Simple icons statusline
-    -- 3. neo-tree: File Explorer (<leader>e)
-    -- 4. which-key: Keymap Helper
-    -- 5. image.nvim: Image support (Markdown)
+    -- 1. mini.statusline: Simple icons statusline
+    -- 2. neo-tree: File Explorer (<leader>e)
+    -- 3. which-key: Keymap Helper
+    -- 4. image.nvim: Image support (Markdown)
 
     {
-        "sainnhe/gruvbox-material",
-        priority = 1000,
-        init = function()
-            vim.g.gruvbox_material_background = "medium"
-            vim.g.gruvbox_material_better_performance = 1
-            vim.cmd.colorscheme("gruvbox-material")
+        "p00f/alabaster.nvim",
+        config = function()
+            vim.cmd("colorscheme alabaster")
         end,
     },
     {
