@@ -103,34 +103,25 @@ require("lazy").setup({
         opts = { filesystem = { window = { mappings = { ["\\"] = "close_window" } } } },
     },
     { "folke/which-key.nvim", event = "VimEnter", opts = { icons = { mappings = vim.g.have_nerd_font } } },
-    -- {
-    --     "3rd/image.nvim",
-    --     build = false,
-    --     opts = {
-    --         backend = "kitty",
-    --         processor = "magick_cli",
-    --         integrations = { markdown = { enabled = true, filetypes = { "markdown", "vimwiki" } } },
-    --         editor_only_render_when_focused = true,
-    --         window_overlap_clear_enabled = true, -- auto show/hide images when the editor gains/looses focus
-    --         tmux_show_only_in_active_window = true,
-    --     },
-    -- },
+    {
+        "3rd/image.nvim",
+        build = false,
+        opts = {
+            backend = "kitty",
+            processor = "magick_cli",
+            integrations = { markdown = { enabled = true, filetypes = { "markdown", "vimwiki" } } },
+            editor_only_render_when_focused = true,
+            window_overlap_clear_enabled = true, -- auto show/hide images when the editor gains/looses focus
+            tmux_show_only_in_active_window = true,
+        },
+    },
 
     -- [[ Section 3.2: The Tools ]]
-    -- 1. Neogit: Git Interface (<leader>gg)
-    -- 2. gitsigns: Gutter signs
-    -- 3. mini.ai/surround: Text objects & surroundings
-    -- 4. guess-indent: Auto-detect indentation
-    -- 5. Telescope: Fuzzy Finder (<leader>s...)
-    -- 6. LuaSnip: Custom Snippets
+    -- 1. mini.ai/surround: Text objects & surroundings
+    -- 2. guess-indent: Auto-detect indentation
+    -- 3. Telescope: Fuzzy Finder (<leader>s...)
+    -- 4. LuaSnip: Custom Snippets
 
-    {
-        "NeogitOrg/neogit",
-        dependencies = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim", "nvim-telescope/telescope.nvim" },
-        config = true,
-        keys = { { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" } },
-    },
-    { "lewis6991/gitsigns.nvim", opts = {} },
     {
         "echasnovski/mini.nvim",
         config = function()
@@ -141,7 +132,7 @@ require("lazy").setup({
     { "NMAC427/guess-indent.nvim", opts = {} },
     {
         "nvim-telescope/telescope.nvim",
-        branch = "0.1.x",
+        branch = "master",
         dependencies = {
             "nvim-lua/plenary.nvim",
             { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -186,8 +177,9 @@ require("lazy").setup({
     {
         "saghen/blink.cmp",
         version = "v0.*",
-        dependencies = { "rafamadriz/friendly-snippets" },
+        dependencies = { "rafamadriz/friendly-snippets", "L3MON4D3/LuaSnip" },
         opts = {
+            snippets = { preset = "luasnip" },
             keymap = { preset = "default" },
             appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = "mono" },
             signature = { enabled = true },
@@ -273,11 +265,14 @@ require("lazy").setup({
     },
     {
         "nvim-treesitter/nvim-treesitter",
+        branch = "main",
         build = ":TSUpdate",
+        lazy = false,
         opts = {
             ensure_installed = {
                 "bash",
                 "c",
+                "cpp",
                 "html",
                 "lua",
                 "luadoc",
@@ -474,4 +469,29 @@ vim.api.nvim_create_autocmd("BufEnter", {
     end,
 })
 
--- vim: ts=4 sts=4 sw=4 et
+-- Lua Snippets
+local ls = require("luasnip")
+local s = ls.snippet
+local t = ls.text_node
+local i = ls.insert_node
+
+-- Jumping Forward
+vim.keymap.set({ "i", "s" }, "<C-L>", function()
+    ls.jump(1)
+end, { silent = true })
+-- Jumping Backward
+vim.keymap.set({ "i", "s" }, "<C-J>", function()
+    ls.jump(-1)
+end, { silent = true })
+-- Changing the Active Choice
+vim.keymap.set({ "i", "s" }, "<C-E>", function()
+    if ls.choice_active() then
+        ls.change_choice(1)
+    end
+end, { silent = true })
+
+ls.add_snippets("all", {
+    ls.snippet("trigger", {
+        ls.text_node("Wow! Text!"),
+    }),
+})
