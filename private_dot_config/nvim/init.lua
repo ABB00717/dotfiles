@@ -315,7 +315,7 @@ require("lazy").setup({
             workspaces = {
                 { name = "Notes", path = "~/Documents/Obsidian/Notes/" },
                 { name = "Linear", path = "~/Documents/Obsidian/Linear/" },
-                { name = "Blog", path = "~/Projects/abb00717.com/content/" },
+                { name = "Blog", path = "~/Projects/blog.abb00717.com/content/" },
                 {
                     name = tostring(vim.fn.getcwd()),
                     path = function()
