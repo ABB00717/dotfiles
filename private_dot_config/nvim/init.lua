@@ -46,7 +46,7 @@ vim.o.confirm = true
 vim.o.inccommand = "split"
 vim.o.mouse = "a" -- Behavior
 -- Obsidian
-vim.opt_local.conceallevel = 1
+vim.o.conceallevel = 1
 
 -- Basic Keymaps
 vim.keymap.set("n", "!", ":!")
@@ -110,21 +110,18 @@ require("lazy").setup({
             -- nnoremap <leader>b :Neotree toggle show buffers right<cr>
             -- nnoremap <leader>s :Neotree float git_status<cr>
         },
-        opts = { filesystem = { window = { mappings = { ["\\"] = "close_window" } } } },
-    },
-    { "folke/which-key.nvim", event = "VimEnter", opts = { icons = { mappings = vim.g.have_nerd_font } } },
-    {
-        "3rd/image.nvim",
-        build = false,
         opts = {
-            backend = "kitty",
-            processor = "magick_cli",
-            integrations = { markdown = { enabled = true, filetypes = { "markdown", "vimwiki" } } },
-            editor_only_render_when_focused = true,
-            window_overlap_clear_enabled = true, -- auto show/hide images when the editor gains/looses focus
-            tmux_show_only_in_active_window = true,
+            filesystem = {
+                window = {
+                    position = "current",
+                },
+                mappings = {
+                    ["\\"] = "close_window",
+                },
+            },
         },
     },
+    { "folke/which-key.nvim", event = "VimEnter", opts = { icons = { mappings = vim.g.have_nerd_font } } },
 
     -- [[ Section 3.2: The Tools ]]
     -- 1. mini.ai/surround: Text objects & surroundings
@@ -164,6 +161,7 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
             vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
             vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = "[S]earch Recent Files" })
+            vim.keymap.set("n", "<leader>sds", builtin.lsp_document_symbols, { desc = "[S]earch [D]ocument [S]ymbols" })
             vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
             vim.keymap.set("n", "<leader>/", function()
                 builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({ previewer = false }))
@@ -246,9 +244,9 @@ require("lazy").setup({
                         vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
                     end
                     -- Maps
-                    map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-                    map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-                    map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+                    map("<leader>gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+                    map("<leader>gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+                    map("<leader>gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
                     map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
                     map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
                     map(
@@ -258,8 +256,8 @@ require("lazy").setup({
                     )
                     map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
                     map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-                    map("K", vim.lsp.buf.hover, "Hover Documentation")
-                    map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+                    map("<leader>K", vim.lsp.buf.hover, "Hover Documentation")
+                    map("<leader>gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
                 end,
             })
         end,
@@ -268,7 +266,13 @@ require("lazy").setup({
         "stevearc/conform.nvim",
         opts = {
             notify_on_error = false,
-            format_on_save = { timeout_ms = 500, lsp_fallback = true },
+            format_on_save = function(bufnr)
+                -- Disable with a global or buffer-local variable
+                if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+                    return
+                end
+                return { timeout_ms = 500, lsp_format = "fallback" }
+            end,
             formatters_by_ft = { lua = { "stylua" }, python = { "isort", "black" }, markdown = { "prettier" } },
             formatters = { stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "4" } } },
         },
@@ -302,117 +306,14 @@ require("lazy").setup({
     },
 
     -- [[ Section 3.4: Knowledge ]]
-    -- 1. obsidian.nvim: Note taking (<leader>o...)
-    -- 2. render-markdown: Render Markdown in Neovim
-    -- X. otter.nvim: Literate Programming (Code injection)
+    -- 1. markdown-preview: Render narkdown in browser
 
-    {
-        "obsidian-nvim/obsidian.nvim",
-        version = "*",
-        ft = "markdown",
-        opts = {
-            legacy_commands = false,
-            workspaces = {
-                { name = "Notes", path = "~/Documents/Obsidian/Notes/" },
-                { name = "Linear", path = "~/Documents/Obsidian/Linear/" },
-                { name = "Blog", path = "~/Projects/blog.abb00717.com/content/" },
-                {
-                    name = tostring(vim.fn.getcwd()),
-                    path = function()
-                        -- use the CWD:
-                        return assert(vim.fn.getcwd())
-                    end,
-                    overrides = {
-                        notes_subdir = vim.NIL, -- have to use 'vim.NIL' instead of 'nil'
-                        new_notes_location = vim.fn.getcwd(),
-                        templates = {
-                            folder = vim.NIL,
-                        },
-                        frontmatter = { enabled = false },
-                    },
-                },
-            },
-            callbacks = {
-                post_set_workspace = function(workspace)
-                    if not workspace then
-                        return
-                    end
-
-                    -- Change the working directory to the current workspace's path
-                    local new_cwd = tostring(workspace.path or "")
-                    if new_cwd and new_cwd ~= "" then
-                        -- Change the working directory to the new workspace path
-                        vim.cmd("cd " .. new_cwd)
-                        vim.notify("Switched to workspace: " .. new_cwd, vim.log.levels.INFO, {
-                            timeout = 1000, -- auto-dismiss after 1s
-                        })
-                    else
-                        print("Error: Workspace path is invalid or nil.")
-                    end
-                end,
-            },
-            -- Customize how Obsidian filename generated
-            note_id_func = function(title)
-                local function random_suffix()
-                    return string.char(
-                        math.random(65, 90),
-                        math.random(65, 90),
-                        math.random(65, 90),
-                        math.random(65, 90)
-                    )
-                end
-
-                -- If there's no given title, return DATE-RAND
-                if title == nil or title == "" then
-                    return tostring(os.date("%Y-%m-%d")) .. "-" .. random_suffix()
-                end
-
-                -- filter / \ : * ? " < > |, replace <whitespace> with "-"
-                local valid_title = title:gsub(" ", "-"):gsub('[/\\:*?"<>|]', "")
-
-                -- If nothing left after filtering
-                if valid_title == "" then
-                    return tostring(os.date("%Y-%m-%d")) .. "-" .. random_suffix()
-                end
-
-                return valid_title
-            end,
-            -- Customize frontmatter data
-            frontmatter = {
-                enabled = function(note)
-                    -- Add the title of the note as an alias.
-                    if note.title then
-                        note:add_alias(note.title)
-                    end
-
-                    local out =
-                        { id = note.id, aliases = note.aliases, tags = note.tags, created = os.date("%Y-%m-%d") }
-
-                    -- `note.metadata` contains any manually added fields in the frontmatter.
-                    -- So here we just make sure those fields are kept in the frontmatter.
-                    if note.metadata ~= nil and not vim.tbl_isempty(note.metadata) then
-                        for k, v in pairs(note.metadata) do
-                            out[k] = v
-                        end
-                    end
-
-                    return out
-                end,
-            },
-            ui = { enable = true },
-        },
-        keys = {
-            { "<leader>on", "<cmd>Obsidian new<cr>", desc = "Obsidian New" },
-            { "<leader>os", "<cmd>Obsidian search<cr>", desc = "Obsidian Search" },
-            { "<leader>ot", "<cmd>Obsidian template<cr>", desc = "Obsidian Template" },
-            { "<leader>ow", "<cmd>Obsidian workspace<cr>", desc = "Obsidian Workspace" },
-        },
-    },
     {
         "MeanderingProgrammer/render-markdown.nvim",
         ft = { "markdown", "codecompanion" },
         opts = {
             heading = { enabled = false },
+            bullet = { enabled = true, icons = { "-", "=", "+", "*" } },
             code = { enabled = true, width = "block" },
             latex = {
                 enabled = true,
@@ -425,18 +326,21 @@ require("lazy").setup({
             },
         },
     },
-    -- {
-    --     "jmbuhr/otter.nvim",
-    --     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    --     init = function()
-    --         vim.api.nvim_create_autocmd("FileType", {
-    --             pattern = "markdown",
-    --             callback = function()
-    --                 require("otter").activate({ "python", "bash", "lua" })
-    --             end,
-    --         })
-    --     end,
-    -- },
+
+    -- [[ Section 3.5: Music ]]
+    -- 1. Strudel: Live Coding with your favorite editor, Neovim
+
+    -- Run :StrudelLaunch to Launch
+    -- Run :StrudelToggle to start and stop the playback
+    -- Run :StrudelUpdate to trigger the update of your code
+    -- Run :StrudelQuit to close your browser
+    {
+        "gruvw/strudel.nvim",
+        build = "npm ci",
+        config = function()
+            require("strudel").setup()
+        end,
+    },
 })
 
 -- ==================================================================
@@ -487,6 +391,25 @@ vim.keymap.set({ "i", "s" }, "<C-E>", function()
         ls.change_choice(1)
     end
 end, { silent = true })
+
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+    if args.bang then
+        -- FormatDisable! will disable formatting just for this buffer
+        vim.b.disable_autoformat = true
+    else
+        vim.g.disable_autoformat = true
+    end
+end, {
+    desc = "Disable autoformat-on-save",
+    bang = true,
+})
+
+vim.api.nvim_create_user_command("FormatEnable", function()
+    vim.b.disable_autoformat = false
+    vim.g.disable_autoformat = false
+end, {
+    desc = "Re-enable autoformat-on-save",
+})
 
 ls.add_snippets("all", {
     ls.snippet("trigger", {

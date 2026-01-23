@@ -11,6 +11,8 @@ alias pwn-college='ssh -i key hacker@dojo.pwn.college'
 alias ssh-rasp='ssh abb00717@abb00717-raspberry'
 alias vencord-terminal='sh -c "$(curl -sS https://vencord.dev/install.sh)"'
 alias ff="fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'"
+alias nvidia-setting="nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings"
+alias yarn="yarn --use-yarnrc $XDG_CONFIG_HOME/yarn/config"
 
 # eza
 alias ls='eza $eza_params'

@@ -1,0 +1,102 @@
+" XDG Base Directory Specification
+set runtimepath^=$XDG_CONFIG_HOME/vim
+set runtimepath+=$XDG_DATA_HOME/vim
+set runtimepath+=$XDG_CONFIG_HOME/vim/after
+
+set packpath^=$XDG_DATA_HOME/vim,$XDG_CONFIG_HOME/vim
+set packpath+=$XDG_CONFIG_HOME/vim/after,$XDG_DATA_HOME/vim/after
+
+let g:netrw_home = $XDG_DATA_HOME."/vim"
+call mkdir($XDG_DATA_HOME."/vim/spell", 'p')
+
+set backupdir=$XDG_STATE_HOME/vim/backup | call mkdir(&backupdir, 'p')
+set directory=$XDG_STATE_HOME/vim/swap   | call mkdir(&directory, 'p')
+set undodir=$XDG_STATE_HOME/vim/undo     | call mkdir(&undodir,   'p')
+set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
+
+set viminfo='100,n~/.local/state/vim/viminfo
+
+"Core
+set encoding=UTF-8
+set termguicolors
+set nocompatible                                "Turn off the compability with Vi
+filetype plugin indent on               "Detect filetype
+syntax on                                   "Syntax highlight
+
+"Interface Display
+set number
+set relativenumber
+"set cursorline                         "Highlight cursorline
+set showmatch                           "Highlight matching bracket
+set scrolloff=5                         "Keep border
+set laststatus=2                                "Keep status bar
+set showmode
+
+"Screens
+set splitright
+set splitbelow
+
+"Indentation
+set tabstop=4                           "Display tab with spaces
+set softtabstop=4                               "Insert space when pressing tab
+set shiftwidth=4                "Sets indentation level to 4 whitespaces
+set expandtab                           "Convert every tabs to space automatically
+set autoindent
+set smartindent
+
+"Search
+set hlsearch                            "Highlight search result
+set noincsearch                         "Display result until finish typing
+set ignorecase
+set smartcase                           "Switch to case sensitive when uppercase letter detected in search
+
+"Others
+set mouse=a
+"set clipboard=unnamedplus
+set hidden                          "Allow you to store unsave file into buffer
+set autoread                            "Auto reload while file's edited external
+"set backup                      "Back up the save file with postfix '~'
+"set patchmode=.orig                    "Save the first version of the file
+"set backupext=.bak              "Name the backup file with the specific postfix
+
+"Command completion menu
+set wildmenu
+set wildoptions=pum,tagfile
+
+"Plugins
+call plug#begin($XDG_CONFIG_HOME . '/vim/plugged')
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-surround'
+
+Plug 'dense-analysis/ale'
+"Plug 'Shougo/deoplete.nvim'
+call plug#end()
+
+"Themes
+set termguicolors
+set background=light
+"colorscheme alabaster
+"colorscheme apprentice
+"colorscheme fogbell
+"colorscheme github_dimmed
+"colorscheme base16-grayscale-dark
+"colorscheme monochrome
+
+"Enable Deoplete and set up keybindings
+"let g:deoplete#enable_at_startup = 1
+
+let g:ale_linters = {'python': ['pylsp'], 'c': ['clangd'], 'cpp': ['clangd'], 'html': ['prettier'], 'javascript': ['prettier']}
+let g:ale_fixers = {'python': ['black'], 'c': ['clang-format'], 'cpp': ['clang-format'], 'html': ['prettier'], 'javascript': ['prettier'], '*': ['remove_trailing_lines', 'trim_whitespace']}
+
+"Keymaps
+nnoremap <F2> :ALERename<cr>
+nnoremap <C-K><C-D> :ALEGoToDefinition<cr>
+nnoremap <C-K><C-I> :ALEGoToDefinition<cr>
+nnoremap <C-K><C-H> :ALEHover<cr>
+nnoremap <C-B> :NERDTree<cr>
+"inoremap { {}<Esc>i
