@@ -1,2 +1,0 @@
-objdump -D <file>
-objdump -M <arch>

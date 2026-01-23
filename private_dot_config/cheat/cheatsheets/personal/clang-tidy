@@ -1,1 +1,0 @@
-clang-tidy --fix-errors your_source_file.cpp -- -std=c++17

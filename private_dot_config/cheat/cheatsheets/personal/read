@@ -1,6 +1,0 @@
----
-tags: [ read, var ]
----
-
-# Read input from STDIN
-read -p "INPUT: " MY_VARIABLE
